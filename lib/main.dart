@@ -67,25 +67,7 @@ class _IconizerScreenState extends State<IconizerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Folder Icon Setter')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ElevatedButton(onPressed: pickFolder, child: const Text('Pick Folder')),
-            ElevatedButton(onPressed: pickIcon, child: const Text('Pick Icon')),
-            SwitchListTile(
-              title: const Text('Portable Mode'), 
-              value: portableMode, 
-              onChanged: (bool value) {
-                setState(() {
-                  portableMode = value;
-                });
-              },
-            ),
-            ElevatedButton(onPressed: applyIcon, child: const Text('Apply Icon')),
-          ],
-        ),
-      )
+      body: Container(),
     );
   }
 }
