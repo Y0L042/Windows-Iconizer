@@ -25,7 +25,12 @@ class _CustomSortableListState extends State<CustomSortableList> {
     return Scaffold(
       body: Column(
         children: [
-          FoldersDataTable(folderPaths: folderPaths,),
+          SingleChildScrollView(
+            child: SizedBox(
+              height: 550,
+              child: FoldersDataTable(folderPaths: folderPaths,)
+            )
+          ),
           DropTarget(
             onDragDone: (detail) {
               setState(() {
@@ -48,10 +53,27 @@ class _CustomSortableListState extends State<CustomSortableList> {
   List<DataRow> convertXFileListToDataRowList(List<XFile> droppedFolders) {
     return droppedFolders.map((xFile) {
     return DataRow(
+      onSelectChanged: (value) {
+        true;
+      },
       cells: <DataCell>[
-        DataCell(Icon(Icons.folder)), // Example icon cell
-        DataCell(Text(xFile.path)), // Use the path property of XFile
-        DataCell(Text('Some other data')), // Replace with actual data
+        DataCell(
+          Icon(Icons.folder)
+        ), // Example icon cell
+        DataCell(
+          _customCell(
+            xFile.path,
+             550
+          )
+        ), // Use the path property of XFile
+        DataCell(
+          Checkbox(
+            value: false,
+            onChanged: (value) {
+              
+            },
+          )
+        ), // Replace with actual data
       ],
     );
   }).toList();
@@ -101,110 +123,63 @@ class FoldersDataTable extends StatefulWidget {
 }
 
 class _FoldersDataTableState extends State<FoldersDataTable> {
-
-  
-
   @override
   Widget build(BuildContext context) {
-    return DataTable(
-      columns: <DataColumn>[
-        DataColumn(label: Text("Icon")),
-        DataColumn(label: Text("Folder Path")),
-        DataColumn(label: Text("Portable")),
-      ],
-      rows: widget.folderPaths,
-  
-    );
-  }
-}
-
-
-
-
-
-
-
-
-
-/*
-
-import 'package:flutter/material.dart';
-
-/// Flutter code sample for [DataTable].
-
-void main() => runApp(const DataTableExampleApp());
-
-class DataTableExampleApp extends StatelessWidget {
-  const DataTableExampleApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: const Text('DataTable Sample')),
-        body: const DataTableExample(),
-      ),
-    );
-  }
-}
-
-class DataTableExample extends StatelessWidget {
-  const DataTableExample({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return DataTable(
-      columns: const <DataColumn>[
-        DataColumn(
-          label: Expanded(
-            child: Text(
-              'Name',
-              style: TextStyle(fontStyle: FontStyle.italic),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildTableHeader(),
+        Expanded(
+          child: SingleChildScrollView(
+            child: DataTable(
+              showBottomBorder: true,
+              showCheckboxColumn: true,
+              columns: <DataColumn>[
+                // DataColumn(label: Text("Icon")),
+                // DataColumn(label: Text("Folder Path")),
+                // DataColumn(label: Text("Portable")),
+                DataColumn(label: Container()), // Empty because header is separate
+                DataColumn(label: Container()),
+                DataColumn(label: Container()),
+              ],
+              rows: widget.folderPaths,
+              
             ),
           ),
-        ),
-        DataColumn(
-          label: Expanded(
-            child: Text(
-              'Age',
-              style: TextStyle(fontStyle: FontStyle.italic),
-            ),
-          ),
-        ),
-        DataColumn(
-          label: Expanded(
-            child: Text(
-              'Role',
-              style: TextStyle(fontStyle: FontStyle.italic),
-            ),
-          ),
-        ),
-      ],
-      rows: const <DataRow>[
-        DataRow(
-          cells: <DataCell>[
-            DataCell(Text('Sarah')),
-            DataCell(Text('19')),
-            DataCell(Text('Student')),
-          ],
-        ),
-        DataRow(
-          cells: <DataCell>[
-            DataCell(Text('Janine')),
-            DataCell(Text('43')),
-            DataCell(Text('Professor')),
-          ],
-        ),
-        DataRow(
-          cells: <DataCell>[
-            DataCell(Text('William')),
-            DataCell(Text('27')),
-            DataCell(Text('Associate Professor')),
-          ],
         ),
       ],
     );
   }
 }
 
-*/
+
+Widget _buildTableHeader() {
+  return DataTable(
+    showCheckboxColumn: true,
+    columns: <DataColumn>[
+      DataColumn(label: Padding(
+        padding: const EdgeInsets.only(left: 140.0),
+        child: Text("Icon"),
+      )),
+      DataColumn(label: _customHeader("Folder Path", 550)),
+      DataColumn(label: Text("Portable")),
+    ],
+    rows: <DataRow>[],
+  );
+}
+
+
+
+Widget _customHeader(String title, double width) {
+  return SizedBox(
+    width: width,
+    child: Text(title, textAlign: TextAlign.center),
+  );
+}
+
+Widget _customCell(String text, double width) {
+  return SizedBox(
+    width: width,
+    child: Text(text, textAlign: TextAlign.center),
+  );
+}
