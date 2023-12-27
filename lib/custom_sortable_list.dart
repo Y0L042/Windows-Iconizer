@@ -3,6 +3,7 @@
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:flutter/material.dart';
 import 'package:cross_file/cross_file.dart';
+import 'package:mime/mime.dart';
 
 class CustomSortableList extends StatefulWidget {
   const CustomSortableList({super.key});
@@ -34,12 +35,17 @@ class _CustomSortableListState extends State<CustomSortableList> {
           DropTarget(
             onDragDone: (detail) {
               setState(() {
-                droppedFolders.addAll(detail.files);
-                String firstFolderPath = droppedFolders[0].path;
-                setState(() {
-                  folderPaths = convertXFileListToDataRowList(droppedFolders);
-                });
-                print('-------My dropped folders: $firstFolderPath');
+                // BUG detail (and detail.files) has all the correct names, but droppedFolders for some reason discards all file names
+                addDroppedFolderToFolderList(droppedFoldersDetails: detail);
+                // droppedFolders.addAll(detail.files);
+                // String firstFolderPath = droppedFolders[0].path;
+                // XFile droppedFile = droppedFolders[0];
+                // String firstFolderFullPath = firstFolderPath + droppedFolders[0].name;
+                // String? mimeType = lookupMimeType(firstFolderFullPath);
+                // setState(() {
+                //   folderPaths = convertXFileListToDataRowList(droppedFolders);
+                // });
+                // print('-------My dropped folders: $firstFolderFullPath, droppedFolder:  $droppedFile, mimeType: $mimeType');
               });
             },
             child: DragAndDropTarget()
@@ -49,6 +55,14 @@ class _CustomSortableListState extends State<CustomSortableList> {
     );
   }
 
+  void addDroppedFolderToFolderList({required DropDoneDetails droppedFoldersDetails})
+  {
+    // TODO Filter for only folders (filter out other file types)
+    // TODO Get folder icon and check portability (if it has)
+    setState(() {
+      // TODO set folder DataRow list
+    });
+  }
 
   List<DataRow> convertXFileListToDataRowList(List<XFile> droppedFolders) {
     return droppedFolders.map((xFile) {
@@ -135,9 +149,6 @@ class _FoldersDataTableState extends State<FoldersDataTable> {
               showBottomBorder: true,
               showCheckboxColumn: true,
               columns: <DataColumn>[
-                // DataColumn(label: Text("Icon")),
-                // DataColumn(label: Text("Folder Path")),
-                // DataColumn(label: Text("Portable")),
                 DataColumn(label: Container()), // Empty because header is separate
                 DataColumn(label: Container()),
                 DataColumn(label: Container()),
