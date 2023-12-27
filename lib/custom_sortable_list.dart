@@ -112,9 +112,8 @@ class _FoldersDataTableState extends State<FoldersDataTable> {
         DataColumn(label: Text("Folder Path")),
         DataColumn(label: Text("Portable")),
       ],
-      rows: <DataRow>[
+      rows: widget.folderPaths,
   
-      ],
     );
   }
 }
