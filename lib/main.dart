@@ -1,9 +1,14 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:iconizer/custom_sortable_list.dart';
 import 'package:iconizer/folder_icon_manager.dart';
 import 'dart:io';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // await WindowManagerService.setupWindow();
   runApp(const MyApp());
 }
 
@@ -67,7 +72,7 @@ class _IconizerScreenState extends State<IconizerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Folder Icon Setter')),
-      body: Container(),
+      body: CustomSortableList(),
     );
   }
 }
