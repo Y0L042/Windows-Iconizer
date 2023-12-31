@@ -15,26 +15,37 @@ class IconViewer extends StatefulWidget {
 
   @override
   State<IconViewer> createState() => _IconViewerState();
-  
 }
 
 class _IconViewerState extends State<IconViewer> {
+  IconCollectionClass? selectedCollection;
+
+  void onCollectionSelected(IconCollectionClass collection) {
+    setState(() {
+      selectedCollection = collection;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Flex(
       direction: Axis.vertical,
       children: [
-        const Padding(
-          padding: EdgeInsets.only(left: 80, right: 40),
+        Padding(
+          padding: const EdgeInsets.only(left: 80, right: 40),
           child: Flex(
             direction: Axis.horizontal,
             children: [
-              SizedBox(
+              const SizedBox(
                 width: 150,
                 height: 150,
                 child: IconColletionsBar()
               ),
-              // IconsGridPanel(),
+              SizedBox(
+                width: 150,
+                height: 150,
+                child: IconsGridPanel(selectedCollection: selectedCollection)
+              ),
               // IconDisplayPanel(),
             ],
           ),
@@ -113,9 +124,7 @@ class _IconCollectionWidgetState extends State<IconCollectionWidget> {
     return ListTile(
       title: Text(widget.iconCollection.collectionName),
       onTap: () {
-        // TODO Pass selected collection to IconsGridPanel
-        // You might need a callback or a shared state management solution
-        print(widget.iconCollection.collectionPath);
+        context.findAncestorStateOfType<_IconViewerState>()?.onCollectionSelected(widget.iconCollection);
       },
     );
   }
@@ -123,11 +132,10 @@ class _IconCollectionWidgetState extends State<IconCollectionWidget> {
 
 
 
-
 class IconsGridPanel extends StatefulWidget {
   final IconCollectionClass? selectedCollection;
 
-  const IconsGridPanel({super.key, this. selectedCollection});
+  const IconsGridPanel({super.key, this.selectedCollection});
 
   @override
   State<IconsGridPanel> createState() => _IconsGridPanelState();
@@ -153,7 +161,10 @@ class _IconsGridPanelState extends State<IconsGridPanel> {
 
   @override
   Widget build(BuildContext context) {
+    loadIcons();
+
     return GridView.builder(
+      scrollDirection: Axis.vertical,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 4,
       ),
