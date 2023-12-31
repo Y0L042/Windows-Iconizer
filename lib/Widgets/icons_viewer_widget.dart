@@ -36,7 +36,7 @@ Widget build(BuildContext context) {
     direction: Axis.vertical,
     children: [
       Padding(
-        padding: const EdgeInsets.only(left: 80, right: 40),
+        padding: const EdgeInsets.only(left: 80, right: 40, top: 50, bottom: 25),
         child: Flex(
           direction: Axis.horizontal,
           children: [
@@ -58,12 +58,18 @@ Widget build(BuildContext context) {
                 ),
               ],
             ),
-            SizedBox(
-              width: 150,
-              height: 150,
-              child: IconsGridPanel(selectedCollection: selectedCollection)
+            Padding(
+              padding: const EdgeInsets.only(left: 35.0),
+              child: SizedBox(
+                width: 150,
+                height: 150,
+                child: IconsGridPanel(selectedCollection: selectedCollection)
+              ),
             ),
-            IconDisplayPanel(selectedIcon: selectedIcon),
+            Padding(
+              padding: const EdgeInsets.only(left:8.0),
+              child: IconDisplayPanel(selectedIcon: selectedIcon),
+            ),
           ],
         ),
       ),
