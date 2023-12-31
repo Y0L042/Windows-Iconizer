@@ -2,9 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:iconizer/custom_sortable_list.dart';
+import 'package:iconizer/Widgets/datatable_widget.dart';
 import 'package:iconizer/folder_icon_manager.dart';
 import 'dart:io';
+
+import 'package:iconizer/Widgets/iconsviewer_widget.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -72,7 +74,14 @@ class _IconizerScreenState extends State<IconizerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Folder Icon Setter')),
-      body: CustomSortableList(),
+      body: Flex(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        direction: Axis.vertical,
+        children: const [
+          // FoldersTableMain(),
+          // IconViewer(),
+        ],
+      ),
     );
   }
 }
