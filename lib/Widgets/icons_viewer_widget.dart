@@ -19,10 +19,17 @@ class IconViewer extends StatefulWidget {
 
 class _IconViewerState extends State<IconViewer> {
   IconCollectionClass? selectedCollection;
+  IconClass? selectedIcon;
 
   void onCollectionSelected(IconCollectionClass collection) {
     setState(() {
       selectedCollection = collection;
+    });
+  }
+
+  void onIconSelected(IconClass icon) {
+    setState(() {
+      selectedIcon = icon;
     });
   }
 
@@ -46,7 +53,7 @@ class _IconViewerState extends State<IconViewer> {
                 height: 150,
                 child: IconsGridPanel(selectedCollection: selectedCollection)
               ),
-              // IconDisplayPanel(),
+               IconDisplayPanel(selectedIcon: selectedIcon),
             ],
           ),
         ),
@@ -161,8 +168,6 @@ class _IconsGridPanelState extends State<IconsGridPanel> {
 
   @override
   Widget build(BuildContext context) {
-    loadIcons();
-
     return GridView.builder(
       scrollDirection: Axis.vertical,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -172,7 +177,14 @@ class _IconsGridPanelState extends State<IconsGridPanel> {
       itemBuilder: (context, index) {
         return GestureDetector(
           onTap: () {
-            // TODO Handle Icon Selection
+            // create IconObject and set as selected, then build app to display in IconDisplayPanel
+            File selectedIcon = iconList[index];
+            IconClass iconObject = IconClass(
+              iconName: path.basename(selectedIcon.path),
+              iconPath: selectedIcon.path,
+              iconImage: Image.file(iconList[index])
+            );
+            context.findAncestorStateOfType<_IconViewerState>()?.onIconSelected(iconObject);
           },
           child: Image.file(iconList[index]),
         );
@@ -186,7 +198,8 @@ class _IconsGridPanelState extends State<IconsGridPanel> {
 
 
 class IconDisplayPanel extends StatefulWidget {
-  const IconDisplayPanel({super.key});
+  const IconDisplayPanel({super.key, this.selectedIcon});
+  final IconClass? selectedIcon;
 
   @override
   State<IconDisplayPanel> createState() => _IconDisplayPanelState();
@@ -195,7 +208,13 @@ class IconDisplayPanel extends StatefulWidget {
 class _IconDisplayPanelState extends State<IconDisplayPanel> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    if (widget.selectedIcon == null) {
+      return Container();
+    }
+    return Image.file(
+      File(widget.selectedIcon!.iconPath)
+    );
+
   }
 }
 
@@ -248,4 +267,13 @@ class IconCollectionClass {
     return filePath.endsWith(".ico");
   }
 
+}
+
+class IconClass {
+  String iconName;
+  String iconPath;
+  Image iconImage;
+
+  IconClass({required this.iconName, required this.iconPath, required this.iconImage});
+  
 }
