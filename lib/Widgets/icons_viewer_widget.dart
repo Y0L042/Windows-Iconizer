@@ -1,11 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:iconizer/Classes/app_config_class.dart';
 import 'package:iconizer/Config/global_config.dart';
 import 'package:iconizer/Widgets/drag_and_drop_target_widget.dart';
-import 'package:mime/mime.dart';
-import 'package:cross_file/cross_file.dart';
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:path/path.dart' as path;
 
@@ -33,39 +30,53 @@ class _IconViewerState extends State<IconViewer> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Flex(
-      direction: Axis.vertical,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 80, right: 40),
-          child: Flex(
-            direction: Axis.horizontal,
-            children: [
-              const SizedBox(
-                width: 150,
-                height: 150,
-                child: IconColletionsBar()
-              ),
-              SizedBox(
-                width: 150,
-                height: 150,
-                child: IconsGridPanel(selectedCollection: selectedCollection)
-              ),
-               IconDisplayPanel(selectedIcon: selectedIcon),
-            ],
-          ),
+@override
+Widget build(BuildContext context) {
+  return Flex(
+    direction: Axis.vertical,
+    children: [
+      Padding(
+        padding: const EdgeInsets.only(left: 80, right: 40),
+        child: Flex(
+          direction: Axis.horizontal,
+          children: [
+            const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Add a title for your IconColletionsBar here
+                Text(
+                  'Icon Collections', // Change this text to your desired title
+                  style: TextStyle(
+                    fontSize: 20, // Customize the font size as needed
+                    fontWeight: FontWeight.bold, // Customize the font weight as needed
+                  ),
+                ),
+                SizedBox(
+                  width: 150,
+                  height: 150,
+                  child: IconColletionsBar(),
+                ),
+              ],
+            ),
+            SizedBox(
+              width: 150,
+              height: 150,
+              child: IconsGridPanel(selectedCollection: selectedCollection)
+            ),
+            IconDisplayPanel(selectedIcon: selectedIcon),
+          ],
         ),
-        DropTarget(
-          onDragDone: (details) {
-            
-          },
-          child: const DragAndDropTarget(),
-        ),
-      ], 
-    );
-  }
+      ),
+      DropTarget(
+        onDragDone: (details) {
+          
+        },
+        child: const DragAndDropTarget(),
+      ),
+    ], 
+  );
+}
+
 }
 
 
