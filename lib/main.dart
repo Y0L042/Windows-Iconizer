@@ -2,25 +2,26 @@
 
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:iconizer/Classes/app_config_class.dart';
 import 'package:iconizer/Widgets/folder_table_viewer.dart';
 import 'package:iconizer/folder_icon_manager.dart';
-import 'dart:io';
-
 import 'package:iconizer/Widgets/icons_viewer_widget.dart';
+
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await WindowManagerService.setupWindow();
-  runApp(const MyApp());
+
+  runApp(MainApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MainApp extends StatelessWidget {
+  const MainApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Iconizer',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
@@ -73,7 +74,7 @@ class _IconizerScreenState extends State<IconizerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Folder Icon Setter')),
+      appBar: AppBar(title: const Text('Iconizer')),
       body: Flex(
         crossAxisAlignment: CrossAxisAlignment.center,
         direction: Axis.vertical,

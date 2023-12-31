@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:iconizer/ui_config.dart';
+import 'package:iconizer/Config/ui_config.dart';
 
 class WidgetFunctions {
 
