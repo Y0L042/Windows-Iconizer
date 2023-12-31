@@ -34,8 +34,8 @@ class _IconViewerState extends State<IconViewer> {
                 height: 150,
                 child: IconColletionsBar()
               ),
-              IconsGridPanel(),
-              IconDisplayPanel(),
+              // IconsGridPanel(),
+              // IconDisplayPanel(),
             ],
           ),
         ),
@@ -110,7 +110,14 @@ class IconCollectionWidget extends StatefulWidget {
 class _IconCollectionWidgetState extends State<IconCollectionWidget> {
   @override
   Widget build(BuildContext context) {
-    return Text(widget.iconCollection.collectionName);
+    return ListTile(
+      title: Text(widget.iconCollection.collectionName),
+      onTap: () {
+        // TODO Pass selected collection to IconsGridPanel
+        // You might need a callback or a shared state management solution
+        print(widget.iconCollection.collectionPath);
+      },
+    );
   }
 }
 
@@ -118,19 +125,49 @@ class _IconCollectionWidgetState extends State<IconCollectionWidget> {
 
 
 class IconsGridPanel extends StatefulWidget {
-  const IconsGridPanel({super.key});
+  final IconCollectionClass? selectedCollection;
+
+  const IconsGridPanel({super.key, this. selectedCollection});
 
   @override
   State<IconsGridPanel> createState() => _IconsGridPanelState();
 }
 
 class _IconsGridPanelState extends State<IconsGridPanel> {
+  List<File> iconList = [];
+
+  @override
+  void didUpdateWidget(IconsGridPanel oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.selectedCollection != oldWidget.selectedCollection) {
+      loadIcons();
+    }
+  }
+
+  Future<void> loadIcons() async {
+    if (widget.selectedCollection != null) {
+      iconList = await widget.selectedCollection!.getIcons();
+      setState(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // return GridView.builder(
-      
-    // );
-    return const Placeholder();
+    return GridView.builder(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 4,
+      ),
+      itemCount: iconList.length,
+      itemBuilder: (context, index) {
+        return GestureDetector(
+          onTap: () {
+            // TODO Handle Icon Selection
+          },
+          child: Image.file(iconList[index]),
+        );
+      },
+    );
+    // return const Placeholder();
   }
 }
 
@@ -180,4 +217,24 @@ class IconCollectionClass {
   String collectionPath;
   
   IconCollectionClass({required this.collectionName, required this.collectionPath});
+
+  Future<List<File>> getIcons() async {
+    final collectionDir = Directory(collectionPath);
+    List<File> icons = [];
+
+    if (await collectionDir.exists()) {
+      await for (final entity in collectionDir.list()) {
+        if (entity is File && isIconFile(entity.path)) {
+          icons.add(entity);
+        }
+      }
+    }
+
+    return icons;
+  }
+
+  bool isIconFile(String filePath) {
+    return filePath.endsWith(".ico");
+  }
+
 }
