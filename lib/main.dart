@@ -2,11 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:iconizer/Widgets/datatable_widget.dart';
+import 'package:iconizer/Widgets/folder_table_viewer.dart';
 import 'package:iconizer/folder_icon_manager.dart';
 import 'dart:io';
 
-import 'package:iconizer/Widgets/iconsviewer_widget.dart';
+import 'package:iconizer/Widgets/icons_viewer_widget.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -78,8 +78,8 @@ class _IconizerScreenState extends State<IconizerScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         direction: Axis.vertical,
         children: const [
-          // FoldersTableMain(),
-          // IconViewer(),
+          FolderTableViewer(),
+          IconViewer(),
         ],
       ),
     );

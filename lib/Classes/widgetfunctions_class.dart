@@ -17,20 +17,6 @@ class WidgetFunctions {
     );
   }
 
-  static Widget buildTableHeader() {
-    return DataTable(
-      showCheckboxColumn: true,
-      columns: <DataColumn>[
-        const DataColumn(label: Padding(
-          padding: EdgeInsets.only(left: UIConfig.minDataColumnWidth*0.35),
-          child: Text("Icon"),
-        )),
-        DataColumn(label: WidgetFunctions.customHeader("Folder Name", UIConfig.minDataColumnWidth)),
-        DataColumn(label: WidgetFunctions.customHeader("Folder Path", UIConfig.minDataColumnWidth)),
-        const DataColumn(label: Text("Portable")),
-      ],
-      rows: const <DataRow>[],
-    );
-  }
+
 
 }

@@ -5,55 +5,51 @@ import 'package:flutter/material.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:iconizer/Classes/folder_class.dart';
 import 'package:iconizer/Classes/widgetfunctions_class.dart';
+import 'package:iconizer/Widgets/drag_and_drop_target_widget.dart';
 import 'package:iconizer/Widgets/folders_datatable_widget.dart';
-import 'package:iconizer/Widgets/iconsviewer_widget.dart';
+import 'package:iconizer/Widgets/icons_viewer_widget.dart';
 import 'package:mime/mime.dart';
 
-class FoldersTableMain extends StatefulWidget {
-  const FoldersTableMain({super.key});
+class FolderTableViewer extends StatefulWidget {
+  const FolderTableViewer({super.key});
   @override
-  State<FoldersTableMain> createState() => _FoldersTableMainState();
+  State<FolderTableViewer> createState() => _FolderTableViewerState();
 }
 
-class _FoldersTableMainState extends State<FoldersTableMain> {
+class _FolderTableViewerState extends State<FolderTableViewer> {
   List<DataRow> datatableFolderRows = [];
   List<FolderClass> folderObjectList = [];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Flex(
-        direction: Axis.vertical,
-        children: [
-          SingleChildScrollView(
-            child: SizedBox(
-              height: 250,
-              child: FoldersDataTable(dataRows: folderObjectList.map((folderObject) => folderObject.dataRow).toList())
-            )
-          ),
-          Row(
-            children: [
-              ButtonBar(
-                children: [
-                  IconButton(onPressed: (){}, icon: Icon(Icons.add_outlined)),
-                  IconButton(onPressed: (){}, icon: Icon(Icons.remove_outlined)),
-                ],
-              ),
-            ],
-          ),
-          DropTarget(
-            onDragDone: (detail) {
-              setState(() {
-                List<XFile> filteredFolders = filterForFolders(droppedFoldersDetails: detail);
-                List<FolderClass> folderObjects = filteredFolders.map((xFile) => createFolderObjectFromXFile(xFile)).toList();
-                folderObjectList.addAll(folderObjects);
-              });
-            },
-            child: DragAndDropTarget()
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SingleChildScrollView(
+          child: SizedBox(
+            height: 250,
+            child: FoldersDataTable(dataRows: folderObjectList.map((folderObject) => folderObject.dataRow).toList())
           )
-        ],
-      ),      
-    );
+        ),
+        ButtonBar(
+          alignment: MainAxisAlignment.start,
+          children: [
+            IconButton(onPressed: (){}, icon: Icon(Icons.add_outlined)),
+            IconButton(onPressed: (){}, icon: Icon(Icons.remove_outlined)),
+          ],
+        ),
+        DropTarget(
+          onDragDone: (detail) {
+            setState(() {
+              List<XFile> filteredFolders = filterForFolders(droppedFoldersDetails: detail);
+              List<FolderClass> folderObjects = filteredFolders.map((xFile) => createFolderObjectFromXFile(xFile)).toList();
+              folderObjectList.addAll(folderObjects);
+            });
+          },
+          child: DragAndDropTarget()
+        )
+      ],
+    );  
   }
 
   List<XFile> filterForFolders({required DropDoneDetails droppedFoldersDetails})
@@ -78,7 +74,7 @@ class _FoldersTableMainState extends State<FoldersTableMain> {
     return newFolder;
   }
 
-  List<DataRow> convertXFileListToDataRowList(List<XFile> droppedFolders) {
+  List<DataRow> DEPRconvertXFileListToDataRowList(List<XFile> droppedFolders) {
     return droppedFolders.map((xFile) {
     return DataRow(
       onSelectChanged: (value) {

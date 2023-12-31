@@ -26,13 +26,13 @@ class FolderClass
         DataCell(
           WidgetFunctions.customCell(
             folderName, 
-            UIConfig.minDataColumnWidth
+            UIConfig.minDataColumnWidth * UIConfig.foldernameScale
           )
         ),
         DataCell(
           WidgetFunctions.customCell(
             folderPath,
-             UIConfig.minDataColumnWidth
+             UIConfig.minDataColumnWidth * UIConfig.folderpathScale
           )
         ), // Use the path property of XFile
         DataCell(
