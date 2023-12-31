@@ -72,18 +72,15 @@ class _IconColletionsBarState extends State<IconColletionsBar> {
 
 
   Future<void> loadCollectionNames() async {
-    List<String> collectionNames = await getCollectionNames(GlobalConfig.appConfig.collectionsBasePath);
+    List<IconCollectionClass> iconColTempList = await getCollectionNames(GlobalConfig.appConfig.collectionsBasePath);
     setState(() {
-      iconCollectionList = collectionNames.map((name) => IconCollectionClass(collectionName: name)).toList();
+      iconCollectionList = iconColTempList;
     });
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-    Future<List<String>> collectionNames = getCollectionNames(GlobalConfig.appConfig.collectionsBasePath); // reads collection folders
-
+    // Future<List<String>> collectionNames = getCollectionNames(GlobalConfig.appConfig.collectionsBasePath); // reads collection folders
     return ListView.builder(
       itemCount: iconCollectionList.length,
       itemBuilder: (BuildContext context, int index) {
@@ -157,21 +154,21 @@ class _IconDisplayPanelState extends State<IconDisplayPanel> {
 
 
 
-Future<List<String>> getCollectionNames(String basePath) async {
+Future<List<IconCollectionClass>> getCollectionNames(String basePath) async {
   final baseDir = Directory(basePath);
-  List<String> collectionNames = [];
+  List<IconCollectionClass> iconCollectionList = [];
 
   if (await baseDir.exists()) {
     await for (final entity in baseDir.list()) {
       if (entity is Directory) {
         String folderName = path.basename(entity.path);
-        collectionNames.add(folderName);
-        print(folderName);
+        String folderPath = entity.path;
+        iconCollectionList.add(IconCollectionClass(collectionName: folderName, collectionPath: folderPath));
       }
     }
   }
 
-  return collectionNames;
+  return iconCollectionList;
 }
 
 
@@ -180,6 +177,7 @@ Future<List<String>> getCollectionNames(String basePath) async {
 
 class IconCollectionClass {
   String collectionName;
+  String collectionPath;
   
-  IconCollectionClass({required this.collectionName});
+  IconCollectionClass({required this.collectionName, required this.collectionPath});
 }
