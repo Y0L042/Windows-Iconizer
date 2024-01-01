@@ -3,11 +3,11 @@
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:flutter/material.dart';
 import 'package:cross_file/cross_file.dart';
-import 'package:iconizer/Classes/folder_class.dart';
+import 'package:iconizer/Classes/folder_row_class.dart';
 import 'package:iconizer/Classes/widgetfunctions_class.dart';
+import 'package:iconizer/Config/ui_config.dart';
 import 'package:iconizer/Widgets/drag_and_drop_target_widget.dart';
 import 'package:iconizer/Widgets/folders_datatable_widget.dart';
-import 'package:iconizer/Widgets/icons_viewer_widget.dart';
 import 'package:mime/mime.dart';
 
 class FolderTableViewer extends StatefulWidget {
@@ -18,7 +18,46 @@ class FolderTableViewer extends StatefulWidget {
 
 class _FolderTableViewerState extends State<FolderTableViewer> {
   List<DataRow> datatableFolderRows = [];
-  List<FolderClass> folderObjectList = [];
+  List<FolderRowClass> folderObjectList = [];
+  List<FolderRowClass> selectedFolderRows = [];
+
+
+  void toggleFolderSelection(FolderRowClass folderRow) {
+    setState(() {
+      folderRow.isSelected = !folderRow.isSelected;
+    });
+  }
+
+  DataRow createDataRow(FolderRowClass folderRow) {
+    return DataRow(
+      selected: folderRow.isSelected,
+      onSelectChanged: (isSelected) {
+        setState(() {
+          if (isSelected != null) {
+            folderRow.isSelected = isSelected;
+            print("${folderRow.folderName}:   ${folderRow.isSelected}");
+
+            if (isSelected) {
+              selectedFolderRows.add(folderRow);
+            } else {
+              selectedFolderRows.remove(folderRow);
+            }
+          }
+        });
+      },
+      cells: <DataCell>[
+        const DataCell(Icon(Icons.folder)),
+        DataCell(WidgetFunctions.customCell(folderRow.folderName, UIConfig.minDataColumnWidth * UIConfig.foldernameScale)),
+        DataCell(WidgetFunctions.customCell(folderRow.folderPath, UIConfig.minDataColumnWidth * UIConfig.folderpathScale)),
+        DataCell(Checkbox(
+          value: false,
+          onChanged: (bool? value) {
+          },
+        )),
+      ],
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +67,7 @@ class _FolderTableViewerState extends State<FolderTableViewer> {
         SingleChildScrollView(
           child: SizedBox(
             height: 250,
-            child: FoldersDataTable(dataRows: folderObjectList.map((folderObject) => folderObject.dataRow).toList())
+            child: FoldersDataTable(dataRows: folderObjectList.map((folderRow) => createDataRow(folderRow)).toList())
           )
         ),
         ButtonBar(
@@ -41,8 +80,14 @@ class _FolderTableViewerState extends State<FolderTableViewer> {
         DropTarget(
           onDragDone: (detail) {
             setState(() {
+              // BUG refactor dataRow creation to fix bug where rows does not show selected.
               List<XFile> filteredFolders = filterForFolders(droppedFoldersDetails: detail);
-              List<FolderClass> folderObjects = filteredFolders.map((xFile) => createFolderObjectFromXFile(xFile)).toList();
+              List<FolderRowClass> folderObjects = filteredFolders.map((xFile) => createFolderObjectFromXFile(xFile)).toList();
+              // create datarows for folder objects
+              for (var folderRow in folderObjects) {
+                folderRow.dataRow = createDataRow(folderRow);
+              }
+
               folderObjectList.addAll(folderObjects);
             });
           },
@@ -65,42 +110,12 @@ class _FolderTableViewerState extends State<FolderTableViewer> {
     return list;
   }
 
-  FolderClass createFolderObjectFromXFile(XFile xfile) {
-    FolderClass newFolder = FolderClass(
+  FolderRowClass createFolderObjectFromXFile(XFile xfile) {
+    FolderRowClass newFolder = FolderRowClass(
       folderName: xfile.name,
       folderPath: xfile.path
     );
-
     return newFolder;
-  }
-
-  List<DataRow> DEPRconvertXFileListToDataRowList(List<XFile> droppedFolders) {
-    return droppedFolders.map((xFile) {
-    return DataRow(
-      onSelectChanged: (value) {
-        true;
-      },
-      cells: <DataCell>[
-        DataCell(
-          Icon(Icons.folder)
-        ), // Example icon cell
-        DataCell(
-          WidgetFunctions.customCell(
-            xFile.path,
-             150
-          )
-        ), // Use the path property of XFile
-        DataCell(
-          Checkbox(
-            value: false,
-            onChanged: (value) {
-              
-            },
-          )
-        ), // Replace with actual data
-      ],
-    );
-  }).toList();
   }
 
 }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:iconizer/Classes/app_config_class.dart';
 import 'package:iconizer/Widgets/folder_table_viewer.dart';
+import 'package:iconizer/Widgets/set_folder_icon_viewer.dart';
 import 'package:iconizer/folder_icon_manager.dart';
 import 'package:iconizer/Widgets/icons_viewer_widget.dart';
 
@@ -81,6 +82,7 @@ class _IconizerScreenState extends State<IconizerScreen> {
         children: const [
           FolderTableViewer(),
           IconViewer(),
+          SetFolderIconViewer(),
         ],
       ),
     );
