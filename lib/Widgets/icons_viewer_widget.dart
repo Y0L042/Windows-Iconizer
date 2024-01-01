@@ -8,7 +8,9 @@ import 'package:path/path.dart' as path;
 
 
 class IconViewer extends StatefulWidget {
-  const IconViewer({super.key});
+  final Function onIconSelected;
+
+  const IconViewer({super.key, required this.onIconSelected});
 
   @override
   State<IconViewer> createState() => _IconViewerState();
@@ -27,6 +29,7 @@ class _IconViewerState extends State<IconViewer> {
   void onIconSelected(IconClass icon) {
     setState(() {
       selectedIcon = icon;
+      widget.onIconSelected(icon);
     });
   }
 

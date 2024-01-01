@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:iconizer/Classes/app_config_class.dart';
+import 'package:iconizer/Classes/folder_row_class.dart';
 import 'package:iconizer/Widgets/folder_table_viewer.dart';
 import 'package:iconizer/Widgets/set_folder_icon_viewer.dart';
 import 'package:iconizer/folder_icon_manager.dart';
@@ -41,6 +42,36 @@ class IconizerScreen extends StatefulWidget {
 }
 
 class _IconizerScreenState extends State<IconizerScreen> {
+  List<FolderRowClass> selectedFolders = [];
+  IconClass? selectedIcon;
+
+  void onFolderSelected(List<FolderRowClass> folders) {
+    setState(() {
+      selectedFolders = folders;
+    });
+  }
+
+  void onIconSelected(IconClass icon) {
+    setState(() {
+      selectedIcon = icon;
+    });
+  }
+
+  List<FolderRowClass> getSelectedFolders() {
+    return selectedFolders;
+  }
+
+  IconClass? getSelectedIcon() {
+    return selectedIcon;
+  }
+
+
+
+
+
+
+
+
   String? folderPath;
   String? iconPath;
   bool portableMode = false;
@@ -79,10 +110,10 @@ class _IconizerScreenState extends State<IconizerScreen> {
       body: Flex(
         crossAxisAlignment: CrossAxisAlignment.center,
         direction: Axis.vertical,
-        children: const [
-          FolderTableViewer(),
-          IconViewer(),
-          SetFolderIconViewer(),
+        children: [
+          FolderTableViewer(onFolderSelected: onFolderSelected),
+          IconViewer(onIconSelected: onIconSelected),
+          SetFolderIconViewer(getSelectedFolders: getSelectedFolders, getSelectedIcon: getSelectedIcon),
         ],
       ),
     );

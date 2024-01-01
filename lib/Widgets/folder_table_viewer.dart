@@ -11,7 +11,9 @@ import 'package:iconizer/Widgets/folders_datatable_widget.dart';
 import 'package:mime/mime.dart';
 
 class FolderTableViewer extends StatefulWidget {
-  const FolderTableViewer({super.key});
+  final Function onFolderSelected;
+
+  const FolderTableViewer({super.key, required this.onFolderSelected});
   @override
   State<FolderTableViewer> createState() => _FolderTableViewerState();
 }
@@ -42,6 +44,7 @@ class _FolderTableViewerState extends State<FolderTableViewer> {
             } else {
               selectedFolderRows.remove(folderRow);
             }
+            widget.onFolderSelected(selectedFolderRows);
           }
         });
       },
