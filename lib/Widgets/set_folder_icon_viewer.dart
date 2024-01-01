@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:iconizer/Classes/folder_row_class.dart';
 import 'package:iconizer/Widgets/icons_viewer_widget.dart';
+import 'package:flutter/material.dart';
+import 'package:iconizer/Classes/folder_row_class.dart';
+import 'package:iconizer/Classes/desktop_ini_handler_class.dart';
+import 'package:path/path.dart' as path;
 
 class SetFolderIconViewer extends StatefulWidget {
   final Function getSelectedFolders;
@@ -8,25 +12,41 @@ class SetFolderIconViewer extends StatefulWidget {
 
   const SetFolderIconViewer({super.key, required this.getSelectedFolders, required this.getSelectedIcon});
 
-
   @override
   State<SetFolderIconViewer> createState() => _SetFolderIconViewerState();
 }
 
 class _SetFolderIconViewerState extends State<SetFolderIconViewer> {
-  bool? isPortable = false;
+  bool isPortable = false;
   List<FolderRowClass> selectedFolders = [];
   IconClass? selectedIcon;
 
-  void setFolderIcon(FolderRowClass folderRow, IconClass? icon) {
-    
+  void setFolderIcon() async {
+    selectedFolders = widget.getSelectedFolders();
+    selectedIcon = widget.getSelectedIcon();
+
+    if (selectedIcon != null) {
+      for (var folderRow in selectedFolders) {
+        var desktopIniHandler = DesktopIniHandler(folderRow.folderPath);
+        if (isPortable) {
+          await desktopIniHandler.makeIconPortable(selectedIcon!.iconPath);
+        } else {
+          await desktopIniHandler.setIconResource(path.absolute(selectedIcon!.iconPath));
+        }
+      }
+    }
+  }
+
+  void clearFolderIcon() async {
+    selectedFolders = widget.getSelectedFolders();
+    for (var folderRow in selectedFolders) {
+      var desktopIniHandler = DesktopIniHandler(folderRow.folderPath);
+      await desktopIniHandler.removeIcon();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    selectedFolders = widget.getSelectedFolders();
-    selectedIcon = widget.getSelectedIcon();
-
     return SizedBox(
       height: 100,
       child: Flex(
@@ -38,11 +58,9 @@ class _SetFolderIconViewerState extends State<SetFolderIconViewer> {
               Checkbox(
                 value: isPortable, 
                 onChanged: (value) {
-                  if (value != null) {
-                    setState(() {
-                      isPortable = value;
-                    });
-                  }
+                  setState(() {
+                    isPortable = value ?? false;
+                  });
                 },
               ),
               const Text("Make icon portable"),
@@ -51,10 +69,7 @@ class _SetFolderIconViewerState extends State<SetFolderIconViewer> {
           FractionallySizedBox(
             widthFactor: 0.3,
             child: ElevatedButton(
-              onPressed: () {
-                print(selectedFolders);
-                print(selectedIcon);
-              }, 
+              onPressed: setFolderIcon, 
               child: const Flex(
                 direction: Axis.horizontal,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -70,9 +85,7 @@ class _SetFolderIconViewerState extends State<SetFolderIconViewer> {
             child: Padding(
               padding: const EdgeInsets.only(top: 5),
               child: ElevatedButton(
-                onPressed: () {
-                  
-                },
+                onPressed: clearFolderIcon,
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

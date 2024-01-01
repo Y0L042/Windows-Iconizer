@@ -11,6 +11,7 @@ class DesktopIniHandler {
 
   Future<void> makeIconPortable(String iconPath) async {
     final iconizerIconsDir = Directory(_iconizerIconsPath);
+
     if (!await iconizerIconsDir.exists()) {
       await iconizerIconsDir.create();
     }
@@ -53,24 +54,31 @@ class DesktopIniHandler {
     }
   }
 
-  Future<void> _updateOrCreateIconResource(File file, String iconResourceLine) async {
-    List<String> lines = await file.exists() ? await file.readAsLines() : [];
-    bool iconResourceFound = false;
+Future<void> _updateOrCreateIconResource(File file, String iconResourceLine) async {
+  List<String> lines = await file.exists() ? await file.readAsLines() : [];
+  bool iconResourceFound = false;
+  bool shellClassInfoFound = false;
 
-    for (int i = 0; i < lines.length; i++) {
-      if (lines[i].startsWith('IconResource=')) {
-        lines[i] = iconResourceLine;
-        iconResourceFound = true;
-        break;
-      }
+  for (int i = 0; i < lines.length; i++) {
+    if (lines[i].startsWith('IconResource=')) {
+      lines[i] = iconResourceLine;
+      iconResourceFound = true;
+    } else if (lines[i] == '[.ShellClassInfo]') {
+      shellClassInfoFound = true;
     }
-
-    if (!iconResourceFound) {
-      lines.add(iconResourceLine);
-    }
-
-    await file.writeAsString(lines.join('\n'));
   }
+
+  if (!iconResourceFound) {
+    lines.add(iconResourceLine);
+  }
+
+  if (!shellClassInfoFound) {
+    lines.insert(0, '[.ShellClassInfo]');
+  }
+
+  await file.writeAsString(lines.join('\n'));
+}
+
 }
 
 
