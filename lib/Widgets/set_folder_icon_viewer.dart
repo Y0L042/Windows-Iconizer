@@ -18,6 +18,10 @@ class _SetFolderIconViewerState extends State<SetFolderIconViewer> {
   List<FolderRowClass> selectedFolders = [];
   IconClass? selectedIcon;
 
+  void setFolderIcon(FolderRowClass folderRow, IconClass? icon) {
+    
+  }
+
   @override
   Widget build(BuildContext context) {
     selectedFolders = widget.getSelectedFolders();
