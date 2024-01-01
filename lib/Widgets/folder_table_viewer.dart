@@ -37,7 +37,7 @@ class _FolderTableViewerState extends State<FolderTableViewer> {
         setState(() {
           if (isSelected != null) {
             folderRow.isSelected = isSelected;
-            print("${folderRow.folderName}:   ${folderRow.isSelected}");
+            // print("${folderRow.folderName}:   ${folderRow.isSelected}");
 
             if (isSelected) {
               selectedFolderRows.add(folderRow);
@@ -83,9 +83,14 @@ class _FolderTableViewerState extends State<FolderTableViewer> {
         DropTarget(
           onDragDone: (detail) {
             setState(() {
-              // BUG refactor dataRow creation to fix bug where rows does not show selected.
               List<XFile> filteredFolders = filterForFolders(droppedFoldersDetails: detail);
-              List<FolderRowClass> folderObjects = filteredFolders.map((xFile) => createFolderObjectFromXFile(xFile)).toList();
+              List<FolderRowClass> folderObjects = filteredFolders.map((xFile) {
+                FolderRowClass folderRow = createFolderObjectFromXFile(xFile);
+                if (!folderAlreadyExists(folderObjectList, folderRow.folderPath)) {
+                  return folderRow;
+                }
+                return null;
+              }).where((element) => element != null).cast<FolderRowClass>().toList();
               // create datarows for folder objects
               for (var folderRow in folderObjects) {
                 folderRow.dataRow = createDataRow(folderRow);
@@ -99,6 +104,11 @@ class _FolderTableViewerState extends State<FolderTableViewer> {
       ],
     );  
   }
+
+  bool folderAlreadyExists(List<FolderRowClass> folderList, String folderPath) {
+    return folderList.any((folderRow) => folderRow.folderPath == folderPath);
+  }
+
 
   List<XFile> filterForFolders({required DropDoneDetails droppedFoldersDetails})
   {
