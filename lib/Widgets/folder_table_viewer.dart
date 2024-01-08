@@ -1,6 +1,8 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:desktop_drop/desktop_drop.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:path/path.dart' as path;
 import 'package:flutter/material.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:iconizer/Classes/folder_row_class.dart';
@@ -19,8 +21,7 @@ class FolderTableViewer extends StatefulWidget {
 }
 
 class _FolderTableViewerState extends State<FolderTableViewer> {
-  List<DataRow> datatableFolderRows = [];
-  List<FolderRowClass> folderObjectList = [];
+  List<FolderRowClass> folderRowObjectList = [];
   List<FolderRowClass> selectedFolderRows = [];
 
 
@@ -70,14 +71,22 @@ class _FolderTableViewerState extends State<FolderTableViewer> {
         SingleChildScrollView(
           child: SizedBox(
             height: 250,
-            child: FoldersDataTable(dataRows: folderObjectList.map((folderRow) => createDataRow(folderRow)).toList())
+            child: FoldersDataTable(dataRows: folderRowObjectList.map((folderRow) => createDataRow(folderRow)).toList())
           )
         ),
         ButtonBar(
           alignment: MainAxisAlignment.start,
           children: [
-            IconButton(onPressed: (){}, icon: Icon(Icons.add_outlined)),
-            IconButton(onPressed: (){}, icon: Icon(Icons.remove_outlined)),
+            IconButton(onPressed: (){
+                addFolders();
+              }, 
+              icon: Icon(Icons.add_outlined)
+            ),
+            IconButton(onPressed: (){
+                removeFolders();
+              }, 
+              icon: Icon(Icons.remove_outlined)
+            ),
           ],
         ),
         DropTarget(
@@ -85,8 +94,8 @@ class _FolderTableViewerState extends State<FolderTableViewer> {
             setState(() {
               List<XFile> filteredFolders = filterForFolders(droppedFoldersDetails: detail);
               List<FolderRowClass> folderObjects = filteredFolders.map((xFile) {
-                FolderRowClass folderRow = createFolderObjectFromXFile(xFile);
-                if (!folderAlreadyExists(folderObjectList, folderRow.folderPath)) {
+                FolderRowClass folderRow = createFolderRowObjectFromXFile(xFile);
+                if (!folderAlreadyExists(folderRowObjectList, folderRow.folderPath)) {
                   return folderRow;
                 }
                 return null;
@@ -96,7 +105,7 @@ class _FolderTableViewerState extends State<FolderTableViewer> {
                 folderRow.dataRow = createDataRow(folderRow);
               }
 
-              folderObjectList.addAll(folderObjects);
+              folderRowObjectList.addAll(folderObjects);
             });
           },
           child: DragAndDropTarget()
@@ -109,9 +118,29 @@ class _FolderTableViewerState extends State<FolderTableViewer> {
     return folderList.any((folderRow) => folderRow.folderPath == folderPath);
   }
 
+  void addFolders() {
+    pickFolder();
+  }
 
-  List<XFile> filterForFolders({required DropDoneDetails droppedFoldersDetails})
-  {
+  void pickFolder() async {
+    String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+    if (selectedDirectory != null) {
+      setState(() {
+        FolderRowClass newFolder = createFolderRowObjectFromPath(selectedDirectory);
+        folderRowObjectList.add(newFolder);
+      });
+    }
+  }
+
+  void removeFolders() {
+    setState(() {
+      for (var folder in selectedFolderRows) {
+        folderRowObjectList.remove(folder);
+      }
+    });
+  }
+
+  List<XFile> filterForFolders({required DropDoneDetails droppedFoldersDetails})  {
     List<XFile> list= [];
     for (var file in droppedFoldersDetails.files) {
       String? mimeType = lookupMimeType(file.path);
@@ -123,11 +152,19 @@ class _FolderTableViewerState extends State<FolderTableViewer> {
     return list;
   }
 
-  FolderRowClass createFolderObjectFromXFile(XFile xfile) {
+  FolderRowClass createFolderRowObjectFromXFile(XFile xfile) {
     FolderRowClass newFolder = FolderRowClass(
       folderName: xfile.name,
       folderPath: xfile.path
     );
+    return newFolder;
+  }
+
+  FolderRowClass createFolderRowObjectFromPath(String folderPath) {
+    FolderRowClass newFolder = FolderRowClass(
+        folderName:   path.basename(folderPath), 
+        folderPath: folderPath
+      );
     return newFolder;
   }
 

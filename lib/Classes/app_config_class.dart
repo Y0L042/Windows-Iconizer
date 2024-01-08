@@ -16,4 +16,4 @@ class AppConfig {
     String fixedPath = "E:\\vlamf\\Downloads\\Icon Test Folders\\$collectionsFolderName";
     return AppConfig(collectionsBasePath: fixedPath, isPortable: false);
   }
-}
+}  
